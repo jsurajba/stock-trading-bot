@@ -1,4 +1,4 @@
-# Antigravity Quant Core Engine
+# stock-trading-bot
 
 An autonomous, production-grade hybrid AI hedge fund engine utilizing momentum indicators, volume distribution, macro news wire catalysts, and dynamic conviction scaling. Built to automate multi-asset allocation decisions with built-in risk governance and a sleek real-time monitoring interface.
 
@@ -36,7 +36,7 @@ graph TD
 ## 3. Repository Blueprint
 
 ```
-antigravity-quant-core/
+stock-trading-bot/
 ├── server.py             # Optimized FastAPI aggregator exposing the dashboard API
 ├── trading_bot.py        # Core quantitative engine managing AI logic & order execution
 ├── index.html            # High-fidelity dashboard terminal using Tailwind CSS & Vanilla JS
@@ -91,8 +91,8 @@ Open your local `.env` file and configure these parameters:
 ### Step 1: Create a Virtual Environment
 Navigate to the project root directory and create a virtual environment:
 ```bash
-# Navigate to the core folder
-cd antigravity-quant-core
+# Navigate to the repository folder
+cd stock-trading-bot
 
 # Create a virtual environment
 python3 -m venv venv
@@ -157,14 +157,13 @@ echo "__pycache__/" >> .gitignore
 git add .
 
 # 3. Record the initial setup commit
-git commit -m "feat: initialize antigravity-quant-core repository layout"
+git commit -m "feat: initialize stock-trading-bot repository layout"
 
 # 4. Set the default branch name to 'main'
 git branch -M main
 
 # 5. Link your local project directory to your remote GitHub repository
-# Replace 'YOUR_USERNAME' and 'YOUR_REPOSITORY_NAME' with your actual remote path:
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git
+git remote add origin https://github.com/jsurajba/stock-trading-bot.git
 
 # 6. Push the code to the remote master branch
 git push -u origin main
