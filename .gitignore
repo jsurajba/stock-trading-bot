@@ -1,4 +1,21 @@
+# Virtual Environment
 venv/
+ENV/
+env/
+
+# Environment Secrets
 .env
+
+# Trade logs & journals
 trade_journal.json
+
+# Python cache & compiling
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
