@@ -9,7 +9,7 @@ An autonomous, production-grade hybrid AI hedge fund engine utilizing momentum i
 Stock Trading Bot is designed as an autonomous execution pipeline that bridges quantitative technical analysis and LLM-driven macro reasoning. 
 The system operates on a dual-engine architecture:
 *   **Deterministic Risk Engine:** A pure Python controller executing real-time portfolio balance sheet audits, asymmetric volatility-based stops/limits, and recent liquidation cooldown periods.
-*   **AI Discretionary CIO Engine (Multi-LLM):** A Generative AI agent (powered by Gemini or Claude) that analyzes broad market regimes, asset technical indicator stacks, and incoming news wire flows to issue conviction-weighted BUY, SELL, or HOLD portfolio reallocations.
+*   **AI Discretionary CIO Engine (Multi-LLM):** A Generative AI agent (powered by Gemini, Claude, or OpenAI) that analyzes broad market regimes, asset technical indicator stacks, and incoming news wire flows to issue conviction-weighted BUY, SELL, or HOLD portfolio reallocations.
 
 ---
 
@@ -20,7 +20,7 @@ graph TD
     A[Alpaca Market Data API] -->|Historical Bars & Trades| B(FastAPI Backend: server.py)
     C[Alpaca News Wire API] -->|Live Headlines & Summaries| B
     B -->|Ingests Technicals & News| D(Quant Engine: trading_bot.py)
-    D -->|Prompts Context & Schema| E[Gemini or Claude]
+    D -->|Prompts Context & Schema| E [Gemini, Claude, or OpenAI]
     E -->|Structured Tool Call / JSON Schema| D
     D -->|Executes Orders / Records Logs| F[Alpaca Brokerage Client]
     B -->|Exposes /api/telemetry JSON| G(Tailwind UI Dashboard: index.html)
@@ -48,14 +48,15 @@ stock-trading-bot/
 
 ## 4. Multi-LLM Provider & Model Setup
 
-The system includes a provider-agnostic adapter layer allowing you to switch between Google Gemini and Anthropic Claude models seamlessly.
+The system includes a provider-agnostic adapter layer allowing you to switch between Google Gemini, Anthropic Claude, and OpenAI GPT models seamlessly.
 
 ### Configuration Parameters
 Open your local `.env` file and configure these parameters:
-*   `LLM_PROVIDER`: The active model chatbot client. Set to either `gemini` or `anthropic`.
+*   `LLM_PROVIDER`: The active model chatbot client. Set to `gemini`, `anthropic`, or `openai`.
 *   `LLM_MODEL`: Select one of the verified, schema-tested models:
     *   **Gemini Models:** `gemini-3.5-flash` (tested/default), `gemini-3.1-pro`
     *   **Claude Models:** `claude-4.7-sonnet`, `claude-4.8-opus` (configured for forced tool-calling integration)
+    *   **OpenAI Models:** `gpt-5.5` (configured for structured output parsing)
 
 ---
 
@@ -83,6 +84,11 @@ Open your local `.env` file and configure these parameters:
     2.  Navigate to **API Keys** under the account settings panel.
     3.  Click **Create Key**, give it a name, and generate the token.
     4.  Copy the key (starts with `sk-ant-`) and assign it to `ANTHROPIC_API_KEY` in your `.env` file.
+*   **OpenAI GPT (OpenAI Platform):**
+    1.  Log into the [OpenAI Platform](https://platform.openai.com/).
+    2.  Navigate to **API Keys** under the dashboard settings.
+    3.  Click **Create new secret key**, name it, and copy it.
+    4.  Assign the key to `OPENAI_API_KEY` in your `.env` file.
 
 ---
 
@@ -136,35 +142,4 @@ Simply open the `index.html` file in any modern web browser. Since it utilizes T
 *   **Linux:** `xdg-open index.html`
 *   **Windows:** `start index.html`
 
----
 
-## 8. Deployment Guide (Git & GitHub Instructions)
-
-To initialize a local Git repository and push this fresh, clean directory to a remote public repository on GitHub, run the following sequence in your terminal:
-
-```bash
-# 1. Initialize local Git repository
-git init
-
-# 2. Add all core files to staging index (excluding venv, trade journals, and .env secrets)
-# Create a standard .gitignore file first
-echo "venv/" >> .gitignore
-echo ".env" >> .gitignore
-echo "trade_journal.json" >> .gitignore
-echo "__pycache__/" >> .gitignore
-
-# Add files
-git add .
-
-# 3. Record the initial setup commit
-git commit -m "feat: initialize stock-trading-bot repository layout"
-
-# 4. Set the default branch name to 'main'
-git branch -M main
-
-# 5. Link your local project directory to your remote GitHub repository
-git remote add origin https://github.com/jsurajba/stock-trading-bot.git
-
-# 6. Push the code to the remote master branch
-git push -u origin main
-```
