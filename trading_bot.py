@@ -18,6 +18,7 @@ from alpaca.trading.requests import MarketOrderRequest
 from alpaca.trading.enums import OrderSide, TimeInForce
 from dotenv import load_dotenv
 import anthropic
+import openai
 
 # ==============================================================================
 # 1. SETTINGS, CREDENTIALS & INITIALIZATION
@@ -31,6 +32,7 @@ LLM_MODEL = os.getenv("LLM_MODEL")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ALPACA_KEY_ID = os.getenv("ALPACA_KEY_ID")
 ALPACA_SECRET = os.getenv("ALPACA_SECRET")
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
@@ -42,8 +44,11 @@ if LLM_PROVIDER == "gemini":
 elif LLM_PROVIDER == "anthropic":
     if not ANTHROPIC_API_KEY:
         raise ValueError("CRITICAL CONFIGURATION ERROR: ANTHROPIC_API_KEY is not set but LLM_PROVIDER is configured as 'anthropic'.")
+elif LLM_PROVIDER == "openai":
+    if not OPENAI_API_KEY:
+        raise ValueError("CRITICAL CONFIGURATION ERROR: OPENAI_API_KEY is not set but LLM_PROVIDER is configured as 'openai'.")
 else:
-    raise ValueError(f"CRITICAL CONFIGURATION ERROR: Unsupported LLM_PROVIDER '{LLM_PROVIDER}'. Must be 'gemini' or 'anthropic'.")
+    raise ValueError(f"CRITICAL CONFIGURATION ERROR: Unsupported LLM_PROVIDER '{LLM_PROVIDER}'. Must be 'gemini', 'anthropic', or 'openai'.")
 
 if not ALPACA_KEY_ID or not ALPACA_SECRET:
     raise ValueError("CRITICAL CONFIGURATION ERROR: ALPACA_KEY_ID and ALPACA_SECRET must be configured in the environment.")
@@ -56,6 +61,10 @@ if LLM_PROVIDER == "gemini":
 anthropic_client = None
 if LLM_PROVIDER == "anthropic":
     anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+openai_client = None
+if LLM_PROVIDER == "openai":
+    openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 # Always initialize brokerage clients
 trading_client = TradingClient(ALPACA_KEY_ID, ALPACA_SECRET, paper=True)
@@ -438,7 +447,7 @@ def is_market_open() -> bool:
 # ==============================================================================
 def generate_portfolio_decision(prompt: str, system_instruction: str) -> PortfolioManagerDecision:
     """
-    Standardizes structured generation between Gemini and Anthropic (Claude) APIs.
+    Standardizes structured generation between Gemini, Anthropic (Claude), and OpenAI APIs.
     Routes to the active provider and maps raw response schemas directly to
     the Pydantic 'PortfolioManagerDecision' model, preventing downstream KeyErrors.
     """
@@ -497,11 +506,24 @@ def generate_portfolio_decision(prompt: str, system_instruction: str) -> Portfol
         if not tool_use_block:
             raise ValueError("ValidationError: Anthropic model failed to issue structured tool call 'submit_portfolio_decision'.")
             
-        # Pydantic validates input dictionary, resolving schema keys (CoT, macro strategy, and asset array)
+        # Pydantic validates input dictionary, resolving schema keys
         input_data = tool_use_block.input
-        
-        # Construct and return validated model instance
         return PortfolioManagerDecision.model_validate(input_data)
+        
+    elif LLM_PROVIDER == "openai":
+        model_name = LLM_MODEL if LLM_MODEL else "gpt-5.5"
+        print(f"Routing to OpenAI. Target Model: {model_name}")
+        
+        response = openai_client.beta.chat.completions.parse(
+            model=model_name,
+            messages=[
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": prompt}
+            ],
+            response_format=PortfolioManagerDecision,
+            temperature=0.2
+        )
+        return response.choices[0].message.parsed
         
     else:
         raise ValueError(f"CRITICAL ERROR: Unsupported LLM_PROVIDER '{LLM_PROVIDER}' configured.")
@@ -797,6 +819,16 @@ def run_market_manager_cycle():
 # ==============================================================================
 # 7. APPLICATION LIFECYCLE CONTROLLER
 # ==============================================================================
+# Structural Core Layer
+CORE_UNIVERSE = ["VOO", "QQQ", "SCHD", "AAPL", "MSFT", "NVDA"]
+
+# Execution Tuning
+LOOP_INTERVAL = 1170 
+COOLDOWN_DAYS = 3 
+
+# Portfolio Risk Constraints
+MAX_SECTOR_EXPOSURE = 0.25 # Maximum 25% of total portfolio equity in a single sector
+
 # Sector Mapping Dictionary
 SECTOR_MAP = {
     # Tech / Semi
