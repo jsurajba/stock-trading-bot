@@ -19,6 +19,7 @@ from alpaca.trading.enums import OrderSide, TimeInForce
 from dotenv import load_dotenv
 import anthropic
 import openai
+import pytz
 
 # ==============================================================================
 # 1. SETTINGS, CREDENTIALS & INITIALIZATION
@@ -850,6 +851,63 @@ SECTOR_MAP = {
     "VOO": "Broad Market", "SCHD": "Broad Market", "TLT": "Fixed Income", "GLD": "Commodities"
 }
 
+def get_next_market_open() -> datetime:
+    """
+    Calculates the exact datetime of the next market open (9:30 AM US/Eastern).
+    If today is a weekday and it is before 9:30 AM Eastern, the next open is today at 9:30 AM.
+    Otherwise, it is 9:30 AM Eastern on the next weekday.
+    """
+    eastern = pytz.timezone('US/Eastern')
+    now_eastern = datetime.now(eastern)
+    
+    # Today at 9:30 AM Eastern
+    today_open = now_eastern.replace(hour=9, minute=30, second=0, microsecond=0)
+    
+    # If today is a weekday (Monday=0 to Friday=4) and we are before 9:30 AM Eastern today
+    if now_eastern.weekday() < 5 and now_eastern < today_open:
+        return today_open
+        
+    # Otherwise, loop to find the next weekday
+    next_day = now_eastern + timedelta(days=1)
+    while True:
+        if next_day.weekday() < 5:
+            return next_day.replace(hour=9, minute=30, second=0, microsecond=0)
+        next_day += timedelta(days=1)
+
+def sleep_until_next_cycle():
+    """
+    Cadence controller that sleeps for standard LOOP_INTERVAL during market hours,
+    or calculates the exact seconds remaining until 9:30 AM Eastern of the next
+    trading day when the market is closed, preventing timer overlap/drift.
+    """
+    eastern = pytz.timezone('US/Eastern')
+    now_eastern = datetime.now(eastern)
+    
+    hour = now_eastern.hour
+    minute = now_eastern.minute
+    is_weekday = now_eastern.weekday() < 5
+    
+    is_during_market_hours = False
+    if is_weekday and (9 <= hour < 16):
+        if hour == 9:
+            is_during_market_hours = (minute >= 30)
+        else:
+            is_during_market_hours = True
+            
+    if is_during_market_hours:
+        print(f"Market is active. Sleeping for standard interval: {LOOP_INTERVAL} seconds.")
+        time.sleep(LOOP_INTERVAL)
+    else:
+        next_open = get_next_market_open()
+        time_to_sleep = (next_open - now_eastern).total_seconds()
+        
+        # Add a 15-second safety buffer to ensure endpoints are updated and open
+        time_to_sleep = max(10, time_to_sleep + 15)
+        
+        wake_time_str = next_open.strftime('%Y-%m-%d %H:%M:%S %Z')
+        print(f"Market is closed. Sleeping for {time_to_sleep:.1f} seconds until next market open: {wake_time_str}\n")
+        time.sleep(time_to_sleep)
+
 def main():
     print("Initializing Autonomous Live Engine...")
     print(f"Operational Config: Ingestion cadence anchored to {LOOP_INTERVAL} second intervals.")
@@ -863,8 +921,7 @@ def main():
             else:
                 print(f"[{datetime.now().strftime('%H:%M:%S')}] Equities market is closed. Suspending AI allocation engine.")
             
-            print(f"Sleeping for {LOOP_INTERVAL} seconds...\n")
-            time.sleep(LOOP_INTERVAL)
+            sleep_until_next_cycle()
             
         except KeyboardInterrupt:
             send_discord_message("🔴 **System Offline:** Manual termination sequence captured.")
