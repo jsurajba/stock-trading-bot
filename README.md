@@ -20,7 +20,7 @@ graph TD
     A[Alpaca Market Data API] -->|Historical Bars & Trades| B(FastAPI Backend: server.py)
     C[Alpaca News Wire API] -->|Live Headlines & Summaries| B
     B -->|Ingests Technicals & News| D(Quant Engine: trading_bot.py)
-    D -->|Prompts Context & Schema| E [Gemini, Claude, or OpenAI]
+    D -->|Prompts Context & Schema| E["Gemini, Claude, or OpenAI"]
     E -->|Structured Tool Call / JSON Schema| D
     D -->|Executes Orders / Records Logs| F[Alpaca Brokerage Client]
     B -->|Exposes /api/telemetry JSON| G(Tailwind UI Dashboard: index.html)
