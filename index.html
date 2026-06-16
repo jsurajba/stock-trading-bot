@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity Quant Core Terminal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes flash-green {
+            0% { background-color: rgba(34, 197, 94, 0.25); }
+            100% { background-color: transparent; }
+        }
+        @keyframes flash-red {
+            0% { background-color: rgba(239, 68, 68, 0.25); }
+            100% { background-color: transparent; }
+        }
+        .flash-up {
+            animation: flash-green 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .flash-down {
+            animation: flash-red 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(71, 85, 105, 0.7);
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-100 flex flex-col antialiased">
+
+    <!-- Header Banner -->
+    <header class="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Decorative Icon -->
+                <div class="h-9 w-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <div>
+                    <span class="text-lg font-bold font-display tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">ANTIGRAVITY QUANT CORE</span>
+                    <span class="text-[10px] block font-mono text-slate-500 uppercase tracking-widest leading-none">CIO Decision Engine Terminal</span>
+                </div>
+            </div>
+            
+            <!-- System Telemetry Status -->
+            <div class="flex items-center space-x-4">
+                <div id="status-badge" class="flex items-center px-3 py-1 rounded-full border border-slate-800 bg-slate-900/50 text-xs font-medium space-x-2">
+                    <span class="h-2 w-2 rounded-full bg-slate-500 animate-pulse" id="status-dot"></span>
+                    <span class="text-slate-400 uppercase tracking-wider font-mono text-[10px]" id="status-text">DISCONNECTED</span>
+                </div>
+                <div class="text-right hidden sm:block">
+                    <span class="text-[10px] text-slate-500 block font-mono">LAST TELEMETRY UPDATE</span>
+                    <span id="last-updated" class="text-xs text-slate-400 font-mono">--:--:--</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8 overflow-hidden">
+        
+        <!-- Left Side: Asset Grid Tiers -->
+        <section class="flex-1 flex flex-col min-w-0">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-xl font-bold font-display text-white tracking-tight">Market Asset Grid</h2>
+                    <p class="text-xs text-slate-400">Real-time quantitative indicators for primary watchlist nodes</p>
+                </div>
+                <div class="text-xs text-slate-500 font-mono bg-slate-900/40 px-2.5 py-1 rounded border border-slate-850">
+                    Refresh Rate: 5s
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="asset-grid">
+                <!-- Ticker Cards will be rendered dynamically by JavaScript -->
+                <div class="col-span-full py-12 flex flex-col items-center justify-center border border-dashed border-slate-800 rounded-xl bg-slate-900/20">
+                    <svg class="animate-spin h-8 w-8 text-indigo-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-sm text-slate-400">Awaiting telemetry stream initialization...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Side: News Wire Feed -->
+        <section class="w-full lg:w-96 flex flex-col shrink-0">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-xl font-bold font-display text-white tracking-tight">Macro News Wire</h2>
+                    <p class="text-xs text-slate-400">Streamed catalysts filtered by watchlist symbols</p>
+                </div>
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+            </div>
+
+            <div class="flex-1 border border-slate-900 bg-slate-950/45 rounded-xl flex flex-col overflow-hidden max-h-[calc(100vh-14rem)] lg:max-h-[600px]">
+                <div class="flex-1 overflow-y-auto p-4 space-y-4" id="news-feed">
+                    <div class="py-12 text-center text-slate-500 text-sm">
+                        No recent news events cataloged.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-4 text-center text-xs text-slate-500 font-mono">
+        &copy; 2026 Antigravity Systems. Piped via FastAPI & Alpaca Markets news wire.
+    </footer>
+
+    <!-- Frontend Core Engine Script -->
+    <script>
+        const API_URL = "http://127.0.0.1:8000/api/telemetry";
+        const WATCHLIST = ["VOO", "QQQ", "NVDA", "AAPL", "MSFT", "TSLA", "AMD", "PLTR", "COIN", "SMCI"];
+        let priceCache = {};
+
+        // Helper to format currency
+        function formatUSD(val) {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+        }
+
+        // Helper to evaluate RSI tier badges
+        function getRSITierBadge(rsi) {
+            let colorClass = "bg-slate-900 border-slate-800 text-slate-400";
+            let label = "NEUTRAL";
+            
+            if (rsi >= 70) {
+                colorClass = "bg-rose-950/40 border-rose-900/60 text-rose-400";
+                label = "OVERBOUGHT";
+            } else if (rsi <= 30) {
+                colorClass = "bg-emerald-950/40 border-emerald-900/60 text-emerald-400";
+                label = "OVERSOLD";
+            } else if (rsi > 55) {
+                colorClass = "bg-blue-950/40 border-blue-900/60 text-blue-400";
+                label = "BULLISH";
+            } else if (rsi < 45) {
+                colorClass = "bg-amber-950/40 border-amber-900/60 text-amber-400";
+                label = "BEARISH";
+            }
+
+            return `
+                <div class="flex items-center justify-between border-t border-slate-900 pt-2.5">
+                    <span class="text-xs text-slate-500">RSI (14)</span>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-mono font-semibold">${rsi.toFixed(2)}</span>
+                        <span class="text-[9px] px-2 py-0.5 rounded font-bold border ${colorClass}">${label}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper to format Distance to 50 SMA
+        function getSMADistanceMarkup(distance) {
+            const isAbove = distance >= 0;
+            const colorClass = isAbove ? "text-emerald-400" : "text-rose-400";
+            const icon = isAbove 
+                ? `<svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7 7 7M12 3v18"></path></svg>`
+                : `<svg class="w-3 h-3 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7-7-7M12 21V3"></path></svg>`;
+            return `
+                <div class="flex items-center justify-between border-t border-slate-900 pt-2.5">
+                    <span class="text-xs text-slate-500">Distance to SMA-50</span>
+                    <div class="flex items-center space-x-1">
+                        ${icon}
+                        <span class="text-xs font-mono font-medium ${colorClass}">${isAbove ? '+' : ''}${distance.toFixed(2)}%</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper to format Volume Ratio
+        function getVolRatioMarkup(ratio) {
+            const isHighVol = ratio >= 1.2;
+            const borderClass = isHighVol ? "border-amber-500/30 bg-amber-950/10" : "";
+            const textClass = isHighVol ? "text-amber-400 font-bold" : "text-slate-300 font-medium";
+            
+            return `
+                <div class="flex items-center justify-between border-t border-slate-900 pt-2.5 ${borderClass} rounded-b-lg">
+                    <span class="text-xs text-slate-500">Volume Ratio</span>
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-xs font-mono ${textClass}">${ratio.toFixed(2)}x</span>
+                        ${isHighVol ? '<span class="text-[9px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-semibold border border-amber-500/30">SPIKE</span>' : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper for Volatility Bar
+        function getVolBarMarkup(vol) {
+            // Cap visual volatility representation at 80% for max gauge bar width
+            const visualPct = Math.min(100, (vol / 80) * 100);
+            let barColor = "bg-blue-500";
+            if (vol > 45) barColor = "bg-rose-500";
+            else if (vol > 30) barColor = "bg-amber-500";
+            else barColor = "bg-emerald-500";
+
+            return `
+                <div class="border-t border-slate-900 pt-2.5 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-500">Realized Vol (20d)</span>
+                        <span class="text-xs font-mono font-medium text-slate-300">${vol.toFixed(1)}%</span>
+                    </div>
+                    <div class="w-full bg-slate-900 h-1 rounded-full overflow-hidden">
+                        <div class="${barColor} h-full rounded-full" style="width: ${visualPct}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update UI Dashboard
+        function updateDashboard(data) {
+            // 1. Update status banner
+            const dot = document.getElementById("status-dot");
+            const badge = document.getElementById("status-badge");
+            const text = document.getElementById("status-text");
+            const lastUpdated = document.getElementById("last-updated");
+
+            dot.className = "h-2 w-2 rounded-full bg-emerald-400 animate-pulse";
+            badge.className = "flex items-center px-3 py-1 rounded-full border border-emerald-500/25 bg-emerald-950/20 text-xs font-medium space-x-2 text-emerald-400 shadow-sm shadow-emerald-500/5";
+            text.textContent = "ONLINE";
+
+            const timeStr = new Date(data.timestamp).toLocaleTimeString();
+            lastUpdated.textContent = timeStr;
+
+            // 2. Render Asset Grid
+            const grid = document.getElementById("asset-grid");
+            let gridHTML = "";
+
+            data.assets.forEach(asset => {
+                const prevPrice = priceCache[asset.ticker];
+                let flashClass = "";
+                
+                if (prevPrice !== undefined && prevPrice !== asset.price) {
+                    flashClass = asset.price > prevPrice ? "flash-up" : "flash-down";
+                }
+                
+                // Cache the price
+                priceCache[asset.ticker] = asset.price;
+
+                gridHTML += `
+                    <div id="card-${asset.ticker}" class="border border-slate-900 bg-slate-950/40 rounded-xl p-5 hover:border-slate-800 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5 flex flex-col space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-lg font-bold font-display tracking-wide text-white">${asset.ticker}</span>
+                                <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 font-mono">WATCHED</span>
+                            </div>
+                            <!-- Price Block with flash class container -->
+                            <div class="px-2 py-1 rounded transition-colors duration-1000 ${flashClass}">
+                                <span class="text-base font-bold font-mono text-white transition-all">${formatUSD(asset.price)}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            ${getRSITierBadge(asset.rsi)}
+                            ${getSMADistanceMarkup(asset.sma50Distance)}
+                            ${getVolRatioMarkup(asset.volRatio)}
+                            ${getVolBarMarkup(asset.realizedVol)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = gridHTML;
+
+            // 3. Render News Wire Feed
+            const newsFeed = document.getElementById("news-feed");
+            if (!data.news_feed || data.news_feed.length === 0) {
+                newsFeed.innerHTML = `
+                    <div class="py-12 text-center text-slate-500 text-sm">
+                        No recent news events cataloged.
+                    </div>
+                `;
+                return;
+            }
+
+            let newsHTML = "";
+            data.news_feed.forEach(article => {
+                const pubDate = new Date(article.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                newsHTML += `
+                    <div class="p-3.5 rounded-lg bg-slate-900/30 border border-slate-900/60 hover:bg-slate-900/50 transition-all space-y-1.5 group">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] bg-indigo-500/10 text-indigo-400 font-bold px-2 py-0.5 rounded border border-indigo-500/20">${article.ticker}</span>
+                            <span class="text-[10px] text-slate-500 font-mono">${pubDate}</span>
+                        </div>
+                        <h4 class="text-xs font-semibold text-slate-200 group-hover:text-white transition-colors leading-relaxed">${article.headline}</h4>
+                        <p class="text-[11px] text-slate-400 leading-normal line-clamp-3">${article.summary}</p>
+                    </div>
+                `;
+            });
+            newsFeed.innerHTML = newsHTML;
+        }
+
+        // Handle error states
+        function handleTelemetryError(err) {
+            console.error("Telemetry fetch failed: ", err);
+            const dot = document.getElementById("status-dot");
+            const badge = document.getElementById("status-badge");
+            const text = document.getElementById("status-text");
+
+            dot.className = "h-2 w-2 rounded-full bg-rose-500";
+            badge.className = "flex items-center px-3 py-1 rounded-full border border-rose-500/35 bg-rose-950/20 text-xs font-medium space-x-2 text-rose-400 shadow-sm shadow-rose-500/5";
+            text.textContent = "OFFLINE (ERROR)";
+        }
+
+        // Fetch Data from Engine
+        async function fetchTelemetry() {
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error(`HTTP Error Status: ${res.status}`);
+                const data = await res.json();
+                
+                if (data.status === "error") {
+                    handleTelemetryError(data.message);
+                } else {
+                    updateDashboard(data);
+                }
+            } catch (err) {
+                handleTelemetryError(err);
+            }
+        }
+
+        // Initial trigger
+        fetchTelemetry();
+
+        // Establish core cadence loop (5 seconds)
+        setInterval(fetchTelemetry, 5000);
+    </script>
+</body>
+</html>

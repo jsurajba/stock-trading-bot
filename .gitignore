@@ -1,0 +1,4 @@
+venv/
+.env
+trade_journal.json
+__pycache__/
