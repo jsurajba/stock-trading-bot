@@ -90,6 +90,12 @@ Open your local `.env` file and configure these parameters:
     3.  Click **Create new secret key**, name it, and copy it.
     4.  Assign the key to `OPENAI_API_KEY` in your `.env` file.
 
+### C. Discord Webhook Integration (Optional)
+To receive real-time execution briefings, order logs, and risk threshold alerts directly in your Discord server:
+1. Open your Discord server and navigate to your target channel settings.
+2. Select the **Integrations** tab and click on **Webhooks**.
+3. Create a new webhook, copy the generated Webhook URL, and map it to `DISCORD_WEBHOOK_URL` in your `.env` file.
+
 ---
 
 ## 6. Quickstart Installation Guide
