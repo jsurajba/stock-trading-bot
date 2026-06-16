@@ -6,7 +6,7 @@ An autonomous, production-grade hybrid AI hedge fund engine utilizing momentum i
 
 ## 1. Project Overview
 
-Antigravity Quant Core is designed as an autonomous execution pipeline that bridges quantitative technical analysis and LLM-driven macro reasoning. 
+Stock Trading Bot is designed as an autonomous execution pipeline that bridges quantitative technical analysis and LLM-driven macro reasoning. 
 The system operates on a dual-engine architecture:
 *   **Deterministic Risk Engine:** A pure Python controller executing real-time portfolio balance sheet audits, asymmetric volatility-based stops/limits, and recent liquidation cooldown periods.
 *   **AI Discretionary CIO Engine (Multi-LLM):** A Generative AI agent (powered by Gemini or Claude) that analyzes broad market regimes, asset technical indicator stacks, and incoming news wire flows to issue conviction-weighted BUY, SELL, or HOLD portfolio reallocations.

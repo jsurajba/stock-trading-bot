@@ -16,7 +16,7 @@ from trading_bot import (
     NewsRequest
 )
 
-app = FastAPI(title="Antigravity Quant Core Engine API")
+app = FastAPI(title="Stock Trading Bot Engine API")
 
 # Enable CORS so the browser can communicate with localhost:8000
 # NOTE: allow_credentials is omitted since allow_origins=["*"] is set to prevent a startup RuntimeError.
